@@ -17,6 +17,7 @@ import { createAdjecencyList, isSpof } from "../algorithms/graph"
 import constants from '@/constants/constants';
 
 import Sidebar from './sidebar';
+import SaveImageModal from './save_image_modal';
 
 
 const nodeTypes = {
@@ -33,6 +34,7 @@ const DnDFlow = () => {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
+    const [imageSaveModalOpen, setImageSaveModalOpen] = useState(false);
 
     const onConnect = useCallback((params) => setEdges((eds) => addEdge({
         ...params,
@@ -143,6 +145,7 @@ const DnDFlow = () => {
 
     return (
         <>
+
             <div className='parent'>
                 <div className='button-parent'>
 
@@ -152,7 +155,7 @@ const DnDFlow = () => {
 
                     <Button size='md' variant='outline' style={{
                         width: "10rem",
-                    }} onClick={checkSPOF}>Export Design</Button>
+                    }} onClick={() => setImageSaveModalOpen(prev => !prev)}>Export Design</Button>
 
                 </div>
 
@@ -172,6 +175,7 @@ const DnDFlow = () => {
                                 nodeTypes={nodeTypes}
                                 fitView
                             >
+                                <SaveImageModal isOpen={imageSaveModalOpen} setOpen={setImageSaveModalOpen} nodes={nodes} edges={edges} />
                                 <Controls />
                             </ReactFlow>
 
