@@ -5,7 +5,9 @@ import ReactFlow, {
     useNodesState,
     useEdgesState,
     Controls,
+    MarkerType
 } from 'reactflow';
+import { Button } from '@mantine/core';
 
 import User from "../node_types/user"
 import DB from "../node_types/db"
@@ -32,7 +34,13 @@ const DnDFlow = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-    const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+    const onConnect = useCallback((params) => setEdges((eds) => addEdge({
+        ...params,
+        animated: true,
+        markerEnd: {
+            type: MarkerType.Arrow,
+        },
+    }, eds)), []);
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
@@ -64,6 +72,7 @@ const DnDFlow = () => {
 
             };
 
+
             setNodes((nds) => nds.concat(newNode));
         },
         [reactFlowInstance]
@@ -82,6 +91,11 @@ const DnDFlow = () => {
             const ret = isSpof(adjList, nodes, potentialSPOF[i]);
 
             if (ret.isSpof) {
+
+
+
+
+
                 for (let j = 0; j < ret.unreachableNodes.length; j++) {
                     unreachableNodes.set(ret.unreachableNodes[j].id, potentialSPOF[i].id);
                 }
@@ -94,7 +108,10 @@ const DnDFlow = () => {
                     return node;
                 }))
 
+
+
             } else {
+
                 setNodes((nds) => nds.map(node => {
                     if (node.id === potentialSPOF[i].id) {
                         node.style = { boxShadow: constants.REACHABLE_BOX_SHADOW }
@@ -107,7 +124,7 @@ const DnDFlow = () => {
         setNodes((nds) => {
             return nds.map(node => {
 
-                if (node.type !== "db") {
+                if (node.type !== constants.DB) {
                     return node;
                 }
 
@@ -125,28 +142,53 @@ const DnDFlow = () => {
     }
 
     return (
-        <div className="dndflow" style={{ height: "100%", width: "100%" }}>
-            <ReactFlowProvider>
-                <div className="reactflow-wrapper" ref={reactFlowWrapper} style={{ height: "100vh", width: "100%" }}>
-                    <ReactFlow
-                        nodes={nodes}
-                        edges={edges}
-                        onNodesChange={onNodesChange}
-                        onEdgesChange={onEdgesChange}
-                        onConnect={onConnect}
-                        onInit={setReactFlowInstance}
-                        onDrop={onDrop}
-                        onDragOver={onDragOver}
-                        nodeTypes={nodeTypes}
-                        fitView
-                    >
-                        <Controls />
-                    </ReactFlow>
+        <>
+            <div className='parent'>
+                <div className='button-parent'>
+
+                    <Button size='md' style={{
+                        width: "10rem",
+                    }} onClick={checkSPOF}>Chaos Monkey</Button>
+
+                    <Button size='md' variant='outline' style={{
+                        width: "10rem",
+                    }} onClick={checkSPOF}>Export Design</Button>
+
                 </div>
-                <Sidebar />
-                <button onClick={checkSPOF}>Chaos Monkey</button>
-            </ReactFlowProvider>
-        </div>
+
+                <div className="dndflow">
+
+                    <ReactFlowProvider>
+                        <div className="reactflow-wrapper" ref={reactFlowWrapper} style={{ height: "100vh" }}>
+                            <ReactFlow
+                                nodes={nodes}
+                                edges={edges}
+                                onNodesChange={onNodesChange}
+                                onEdgesChange={onEdgesChange}
+                                onConnect={onConnect}
+                                onInit={setReactFlowInstance}
+                                onDrop={onDrop}
+                                onDragOver={onDragOver}
+                                nodeTypes={nodeTypes}
+                                fitView
+                            >
+                                <Controls />
+                            </ReactFlow>
+
+                        </div>
+
+                    </ReactFlowProvider>
+
+                </div>
+                <div style={{
+                    width: "100%"
+                }}>
+                    <Sidebar />
+
+                </div>
+
+            </div>
+        </>
     );
 };
 

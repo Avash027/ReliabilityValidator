@@ -1,60 +1,23 @@
 .dndflow {
-  flex-direction: column;
+  /* flex-direction: column;
+  display: flex;
+  flex-grow: 1; */
+  height: 100%;
+
+}
+
+.parent {
   display: flex;
   flex-grow: 1;
-  height: 100%;
 }
 
-.dndflow aside {
-  border-right: 1px solid #eee;
-  padding: 15px 10px;
-  font-size: 12px;
-  background: #fcfcfc;
+
+
+.reactflow-wrapper {
+  height: 100vh;
+  width: 75vw;
 }
 
-.dndflow aside .description {
-  margin-bottom: 10px;
-}
-
-.dndflow .dndnode {
-  height: 20px;
-  padding: 4px;
-  border: 1px solid #1a192b;
-  border-radius: 2px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: grab;
-}
-
-.dndflow .dndnode.input {
-  border-color: #0041d0;
-}
-
-.dndflow .dndnode.output {
-  border-color: #ff0072;
-}
-
-.dndflow .reactflow-wrapper {
-  flex-grow: 1;
-  height: 100%;
-}
-
-.dndflow .selectall {
-  margin-top: 10px;
-}
-
-@media screen and (min-width: 768px) {
-  .dndflow {
-    flex-direction: row;
-  }
-
-  .dndflow aside {
-    width: 20%;
-    max-width: 250px;
-  }
-}
 
 .db {
   border: 1px solid #eee;
@@ -90,4 +53,39 @@
   justify-content: space-between;
   font-size: 10px;
   box-shadow: 0 0 5px #f0bcf7;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+  max-height: 100vh;
+  box-shadow: 0 0 10px #eee;
+  width: 100%;
+}
+
+.c-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 2rem;
+  padding: 2rem 2rem;
+  height: 10rem;
+  width: 10rem;
+  border: solid 1px #eee;
+  text-align: center;
+  cursor: grab;
+}
+
+.button-parent {
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px #eee;
+  justify-content: center;
+}
+
+.button-parent>* {
+  margin: 1rem 1rem;
 }

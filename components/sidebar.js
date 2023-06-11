@@ -56,33 +56,30 @@ const components = [
 ]
 
 export default function Sidebar() {
+
+
     const onDragStart = (event, component) => {
         event.dataTransfer.setData(constants.TRANSFER_LABEL, JSON.stringify(component));
         event.dataTransfer.effectAllowed = 'move';
     };
 
     return (
-        <aside>
-            <div className="description">You can drag these nodes to the pane on the right.</div>
-            {
-                components.map((component, idx) => {
-                    switch (component.type) {
-                        case constants.USER:
-                            return <div key={idx} className="dndnode input" onDragStart={(event) => onDragStart(event, component)} draggable>
-                                {component.name}
-                            </div>
-                        case constants.SERVER:
-                            return <div key={idx} className="dndnode" onDragStart={(event) => onDragStart(event, component)} draggable>
-                                {component.name}
-                            </div>
-                        default:
-                            return <div key={idx} className="dndnode output" onDragStart={(event) => onDragStart(event, component)} draggable>
-                                {component.name}
-                            </div>
-                    }
-                })
-            }
+        <>
 
-        </aside>
+            <div
+                className="list-container"
+            >
+
+                {
+                    components.map((component, idx) => {
+                        return <div className="c-list" key={idx} onDragStart={(event) => onDragStart(event, component)} draggable>
+                            <div><img src={component.icon} height={50} width={50}></img></div>
+                            <div>{component.name}</div>
+                        </div>
+                    })
+                }
+
+            </div >
+        </>
     );
 };
