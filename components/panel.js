@@ -18,6 +18,8 @@ import constants from '@/constants/constants';
 
 import Sidebar from './sidebar';
 import SaveImageModal from './save_image_modal';
+import ImportDiagramModal from './import_diagram_modal';
+import { HeaderMain } from './header';
 
 
 const nodeTypes = {
@@ -26,8 +28,7 @@ const nodeTypes = {
     db: DB,
 };
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+let id = 0
 
 const DnDFlow = () => {
     const reactFlowWrapper = useRef(null);
@@ -35,6 +36,11 @@ const DnDFlow = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [imageSaveModalOpen, setImageSaveModalOpen] = useState(false);
+    const [importDiagramModalOpen, setImportDiagramModalOpen] = useState(false);
+
+    const getId = () => {
+        return `${id++}`
+    }
 
     const onConnect = useCallback((params) => setEdges((eds) => addEdge({
         ...params,
@@ -74,6 +80,7 @@ const DnDFlow = () => {
 
             };
 
+            console.log(newNode)
 
             setNodes((nds) => nds.concat(newNode));
         },
@@ -91,13 +98,9 @@ const DnDFlow = () => {
 
         for (let i = 0; i < potentialSPOF.length; i++) {
             const ret = isSpof(adjList, nodes, potentialSPOF[i]);
+            console.log(ret, potentialSPOF[i])
 
             if (ret.isSpof) {
-
-
-
-
-
                 for (let j = 0; j < ret.unreachableNodes.length; j++) {
                     unreachableNodes.set(ret.unreachableNodes[j].id, potentialSPOF[i].id);
                 }
@@ -145,7 +148,22 @@ const DnDFlow = () => {
 
     return (
         <>
+            <HeaderMain links={[
+                {
+                    "link": "/about",
+                    "label": "Home"
+                },
+                {
+                    "link": "/learn",
+                    "label": "Features"
+                },
+                {
+                    "link": "/pricing",
+                    "label": "Pricing"
+                }
+            ]}>
 
+            </HeaderMain>
             <div className='parent'>
                 <div className='button-parent'>
 
@@ -156,6 +174,10 @@ const DnDFlow = () => {
                     <Button size='md' variant='outline' style={{
                         width: "10rem",
                     }} onClick={() => setImageSaveModalOpen(prev => !prev)}>Export Design</Button>
+
+                    <Button size='md' variant='outline' style={{
+                        width: "10rem",
+                    }} onClick={() => setImportDiagramModalOpen(prev => !prev)}>Import Design</Button>
 
                 </div>
 
@@ -176,6 +198,7 @@ const DnDFlow = () => {
                                 fitView
                             >
                                 <SaveImageModal isOpen={imageSaveModalOpen} setOpen={setImageSaveModalOpen} nodes={nodes} edges={edges} />
+                                <ImportDiagramModal isOpen={importDiagramModalOpen} setOpen={setImportDiagramModalOpen} setNodes={setNodes} setEdges={setEdges} />
                                 <Controls />
                             </ReactFlow>
 

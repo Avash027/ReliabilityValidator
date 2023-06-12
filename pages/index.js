@@ -4,6 +4,7 @@ import 'reactflow/dist/style.css';
 export default function Home() {
   return (
     <>
+
       <Panel></Panel>
     </>
   )

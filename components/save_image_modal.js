@@ -14,6 +14,7 @@ export default function SaveImageModal({ isOpen, setOpen, nodes, edges }) {
     const [format, setFormat] = useState('toPng')
     const [width, setWidth] = useState(imageWidth)
     const [height, setHeight] = useState(imageHeight)
+    const [fileName, setFileName] = useState('default')
 
 
     const convertToJsonFileAndDownload = (data) => {
@@ -22,7 +23,7 @@ export default function SaveImageModal({ isOpen, setOpen, nodes, edges }) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'data.json';
+        link.download = `${fileName}.json`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -34,8 +35,14 @@ export default function SaveImageModal({ isOpen, setOpen, nodes, edges }) {
 
     function downloadImage(dataUrl) {
         const a = document.createElement('a');
+        let f = 'png'
 
-        a.setAttribute('download', 'reactflow.png');
+        if (format === "JPEG")
+            f = 'jpg'
+        else if (format === "SVG")
+            f = 'svg'
+
+        a.setAttribute('download', `${fileName}.${f}`);
         a.setAttribute('href', dataUrl);
         a.click();
     }
@@ -92,6 +99,13 @@ export default function SaveImageModal({ isOpen, setOpen, nodes, edges }) {
                 ]}
                 onSelect={(e) => setFormat(e.target.value)}
             />
+            <TextInput style={{
+                marginBottom: "2rem"
+            }}
+                placeholder="Name of the file"
+                value={fileName}
+                label={"Name of the file"}
+                onChange={(e) => setFileName(e.target.value)}></TextInput>
             {format !== 'JSON' && <TextInput
                 style={{
                     marginBottom: "2rem"
