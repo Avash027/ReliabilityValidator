@@ -1,4 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
+
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, {
     ReactFlowProvider,
     addEdge,
@@ -7,7 +8,8 @@ import ReactFlow, {
     Controls,
     MarkerType
 } from 'reactflow';
-import { Button } from '@mantine/core';
+import { Button, Alert } from '@mantine/core';
+import { IconAlertCircle } from "@tabler/icons-react"
 
 import User from "../node_types/user"
 import DB from "../node_types/db"
@@ -19,7 +21,6 @@ import constants from '@/constants/constants';
 import Sidebar from './sidebar';
 import SaveImageModal from './save_image_modal';
 import ImportDiagramModal from './import_diagram_modal';
-import { HeaderMain } from './header';
 
 
 const nodeTypes = {
@@ -31,12 +32,32 @@ const nodeTypes = {
 let id = 0
 
 const DnDFlow = () => {
+
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [imageSaveModalOpen, setImageSaveModalOpen] = useState(false);
     const [importDiagramModalOpen, setImportDiagramModalOpen] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+
+    useEffect(() => {
+        if (nodes.length === 0 && edges.length === 0) {
+            return;
+        }
+        window.localStorage.setItem(constants.LOCAL_STORAGE_KEY, JSON.stringify({ nodes, edges }));
+    }, [nodes, edges]);
+
+    useEffect(() => {
+        const data = window.localStorage.getItem(constants.LOCAL_STORAGE_KEY);
+        if (data) {
+            const parsedData = JSON.parse(data);
+            setNodes(parsedData.nodes);
+            setEdges(parsedData.edges);
+        }
+    }, []);
+
 
     const getId = () => {
         return `${id++}`
@@ -54,6 +75,27 @@ const DnDFlow = () => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }, []);
+
+    function isValid() {
+        if (nodes.length === 0) {
+            setAlertMessage("Please add at least one node");
+            return false;
+        }
+        if (nodes.filter(node => node.type === constants.SERVER).length === 0) {
+            setAlertMessage("Please add at least one server");
+            return false;
+        }
+        if (nodes.filter(node => node.type === constants.USER).length === 0) {
+            setAlertMessage("Please add at least one user");
+            return false;
+        }
+        if (nodes.filter(node => node.type === constants.DB).length === 0) {
+            setAlertMessage("Please add at least one database");
+            return false;
+        }
+        return true;
+
+    }
 
     const onDrop = useCallback(
         (event) => {
@@ -89,6 +131,13 @@ const DnDFlow = () => {
 
 
     const checkSPOF = () => {
+
+        if (!isValid()) {
+            setShowAlert(true);
+            return;
+        }
+        setShowAlert(false);
+
         let adjList = createAdjecencyList(nodes, edges);
         const potentialSPOF = nodes.filter(node => {
             return node.type === constants.SERVER
@@ -98,7 +147,6 @@ const DnDFlow = () => {
 
         for (let i = 0; i < potentialSPOF.length; i++) {
             const ret = isSpof(adjList, nodes, potentialSPOF[i]);
-            console.log(ret, potentialSPOF[i])
 
             if (ret.isSpof) {
                 for (let j = 0; j < ret.unreachableNodes.length; j++) {
@@ -108,7 +156,7 @@ const DnDFlow = () => {
                 setNodes((nds) => nds.map(node => {
                     if (node.id === potentialSPOF[i].id) {
                         node.style = { boxShadow: constants.SPOF_BOX_SHADOW }
-                        node.meta = { label: constants.SPOF_LABEL }
+                        node.data = { ...node.data, isSpof: true }
                     }
                     return node;
                 }))
@@ -120,6 +168,7 @@ const DnDFlow = () => {
                 setNodes((nds) => nds.map(node => {
                     if (node.id === potentialSPOF[i].id) {
                         node.style = { boxShadow: constants.REACHABLE_BOX_SHADOW }
+                        node.data = { ...node.data, isSpof: false }
                     }
                     return node;
                 }))
@@ -148,24 +197,14 @@ const DnDFlow = () => {
 
     return (
         <>
-            <HeaderMain links={[
-                {
-                    "link": "/about",
-                    "label": "Home"
-                },
-                {
-                    "link": "/learn",
-                    "label": "Features"
-                },
-                {
-                    "link": "/pricing",
-                    "label": "Pricing"
-                }
-            ]}>
-
-            </HeaderMain>
+            {showAlert && <Alert onClose={() => setShowAlert(false)} withCloseButton className='alert' icon={<IconAlertCircle size="1rem" />} title="Invalid Design" color="red">
+                {alertMessage}
+            </Alert>}
             <div className='parent'>
+
                 <div className='button-parent'>
+
+                    <h3>Actions</h3>
 
                     <Button size='md' style={{
                         width: "10rem",
@@ -178,6 +217,15 @@ const DnDFlow = () => {
                     <Button size='md' variant='outline' style={{
                         width: "10rem",
                     }} onClick={() => setImportDiagramModalOpen(prev => !prev)}>Import Design</Button>
+
+                    <Button size='md' variant='outline' style={{
+                        width: "10rem",
+                    }} onClick={() => {
+                        setNodes([]);
+                        setEdges([]);
+                        window.localStorage.removeItem(constants.LOCAL_STORAGE_KEY);
+
+                    }}>Clear</Button>
 
                 </div>
 

@@ -10,6 +10,11 @@ import users from "@/assets/Users.svg"
 
 const components = [
     {
+        name: "Users",
+        type: constants.USER,
+        icon: users.src
+    },
+    {
         name: "Cache Server",
         type: constants.SERVER,
         icon: cache.src
@@ -45,11 +50,7 @@ const components = [
         type: constants.DB,
         icon: prodDb.src
     },
-    {
-        name: "Users",
-        type: constants.USER,
-        icon: users.src
-    },
+
 
 
 
@@ -69,7 +70,7 @@ export default function Sidebar() {
             <div
                 className="list-container"
             >
-
+                <h3>Components</h3>
                 {
                     components.map((component, idx) => {
                         return <div className="c-list" key={idx} onDragStart={(event) => onDragStart(event, component)} draggable>

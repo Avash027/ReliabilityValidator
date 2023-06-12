@@ -84,8 +84,19 @@
   flex-direction: column;
   box-shadow: 0 0 10px #eee;
   justify-content: center;
+  text-align: center;
 }
 
 .button-parent>* {
   margin: 1rem 1rem;
+}
+
+.alert {
+  position: fixed;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  padding: 1rem;
+  max-width: 30%;
 }

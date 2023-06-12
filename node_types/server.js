@@ -26,7 +26,10 @@ export default function Server(data) {
             id="d"
             position={Position.Right}
         ></Handle>
-        <img height={100} width={100} src={data.data.component.icon}></img>
+        {data.data.isSpof ?
+            <img height={100} width={100} src={"https://media.tenor.com/-LlG5WSoK74AAAAi/monkey.gif"}></img> :
+            <img height={100} width={100} src={data.data.component.icon}></img>
+        }
         <p>
             {data.data.component.name}
         </p>

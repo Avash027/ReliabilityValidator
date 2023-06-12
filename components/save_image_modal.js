@@ -30,9 +30,6 @@ export default function SaveImageModal({ isOpen, setOpen, nodes, edges }) {
         URL.revokeObjectURL(url);
     }
 
-
-
-
     function downloadImage(dataUrl) {
         const a = document.createElement('a');
         let f = 'png'
