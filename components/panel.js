@@ -16,6 +16,7 @@ import DB from "../node_types/db"
 import Server from "../node_types/server"
 
 import { createAdjecencyList, isSpof } from "../algorithms/graph"
+import { CheckAndMarkSPOF } from "../algorithms/spof_checker"
 import constants from '@/constants/constants';
 
 import Sidebar from './sidebar';
@@ -42,6 +43,7 @@ const DnDFlow = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
 
+
     useEffect(() => {
         if (nodes.length === 0 && edges.length === 0) {
             return;
@@ -55,6 +57,7 @@ const DnDFlow = () => {
             const parsedData = JSON.parse(data);
             setNodes(parsedData.nodes);
             setEdges(parsedData.edges);
+            id = parsedData.nodes.map(node => parseInt(node.id)).reduce((a, b) => Math.max(a, b), 0) + 1;
         }
     }, []);
 
@@ -66,6 +69,9 @@ const DnDFlow = () => {
     const onConnect = useCallback((params) => setEdges((eds) => addEdge({
         ...params,
         animated: true,
+        style: {
+            color: "black"
+        },
         markerEnd: {
             type: MarkerType.Arrow,
         },
@@ -118,82 +124,27 @@ const DnDFlow = () => {
                 id: getId(),
                 type: component.type,
                 position,
-                data: { label: `${component.type} node`, component },
+                data: {
+                    label: `${component.type} node`,
+                    component,
+                    isSpof: false,
+                    deleteNode: deleteNode,
+                },
 
             };
-
-            console.log(newNode)
 
             setNodes((nds) => nds.concat(newNode));
         },
         [reactFlowInstance]
     );
 
-
-    const checkSPOF = () => {
-
-        if (!isValid()) {
-            setShowAlert(true);
-            return;
-        }
-        setShowAlert(false);
-
-        let adjList = createAdjecencyList(nodes, edges);
-        const potentialSPOF = nodes.filter(node => {
-            return node.type === constants.SERVER
-        })
-
-        const unreachableNodes = new Map();
-
-        for (let i = 0; i < potentialSPOF.length; i++) {
-            const ret = isSpof(adjList, nodes, potentialSPOF[i]);
-
-            if (ret.isSpof) {
-                for (let j = 0; j < ret.unreachableNodes.length; j++) {
-                    unreachableNodes.set(ret.unreachableNodes[j].id, potentialSPOF[i].id);
-                }
-
-                setNodes((nds) => nds.map(node => {
-                    if (node.id === potentialSPOF[i].id) {
-                        node.style = { boxShadow: constants.SPOF_BOX_SHADOW }
-                        node.data = { ...node.data, isSpof: true }
-                    }
-                    return node;
-                }))
-
-
-
-            } else {
-
-                setNodes((nds) => nds.map(node => {
-                    if (node.id === potentialSPOF[i].id) {
-                        node.style = { boxShadow: constants.REACHABLE_BOX_SHADOW }
-                        node.data = { ...node.data, isSpof: false }
-                    }
-                    return node;
-                }))
-            }
-        }
-
-        setNodes((nds) => {
-            return nds.map(node => {
-
-                if (node.type !== constants.DB) {
-                    return node;
-                }
-
-                if (unreachableNodes.has(node.id)) {
-                    node.style = { boxShadow: constants.UNREACHABLE_BOX_SHADOW }
-                    node.meta = { label: "Unreachable from SPOF: " + unreachableNodes.get(node.id) }
-                } else {
-                    node.style = { boxShadow: constants.REACHABLE_BOX_SHADOW }
-                    node.meta = { label: "Reachable" }
-                }
-                return node;
-            })
-        })
-
+    const deleteNode = (nodeId) => {
+        setNodes((nds) => nds.filter(node => node.id !== nodeId));
+        setEdges((eds) => eds.filter(edge => edge.source !== nodeId && edge.target !== nodeId));
     }
+
+
+
 
     return (
         <>
@@ -208,7 +159,17 @@ const DnDFlow = () => {
 
                     <Button size='md' style={{
                         width: "10rem",
-                    }} onClick={checkSPOF}>Chaos Monkey</Button>
+                    }} onClick={() => {
+                        CheckAndMarkSPOF({
+                            nodes: nodes,
+                            edges: edges,
+                            isValid: isValid,
+                            setNodes: setNodes,
+                            setShowAlert: setShowAlert,
+                            createAdjecencyList: createAdjecencyList,
+                            isSpof: isSpof
+                        })
+                    }}>Chaos Monkey</Button>
 
                     <Button size='md' variant='outline' style={{
                         width: "10rem",
@@ -223,6 +184,7 @@ const DnDFlow = () => {
                     }} onClick={() => {
                         setNodes([]);
                         setEdges([]);
+                        id = 0
                         window.localStorage.removeItem(constants.LOCAL_STORAGE_KEY);
 
                     }}>Clear</Button>
@@ -247,6 +209,7 @@ const DnDFlow = () => {
                             >
                                 <SaveImageModal isOpen={imageSaveModalOpen} setOpen={setImageSaveModalOpen} nodes={nodes} edges={edges} />
                                 <ImportDiagramModal isOpen={importDiagramModalOpen} setOpen={setImportDiagramModalOpen} setNodes={setNodes} setEdges={setEdges} />
+
                                 <Controls />
                             </ReactFlow>
 

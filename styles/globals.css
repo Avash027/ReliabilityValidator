@@ -77,6 +77,12 @@
   border: solid 1px #eee;
   text-align: center;
   cursor: grab;
+  transition: all .2s;
+}
+
+.c-list:hover {
+  background-color: #eee;
+  scale: 1.1;
 }
 
 .button-parent {
