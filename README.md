@@ -18,7 +18,7 @@ A  Web application to create system design diagrams and identify single points o
 
 
 <center>
-<img  src="https://cdn.jsdelivr.net/gh/avash027/assets/preview_spof.gif" width="80%"></img>
+<img  src="https://cdn.jsdelivr.net/gh/avash027/assets/preview_spof.gif" width="100%"></img>
 </center>
 
 ## Key Features
