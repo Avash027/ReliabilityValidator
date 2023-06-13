@@ -1,38 +1,75 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+<h1 align="center">
+Reliability Validator
+</h1>
 
-First, run the development server:
+<h4 align="center"> 
+A  Web application to create system design diagrams and identify single points of failure, made with 
+ <a href="https://reactflow.dev/" target="_blank">React-Flow</a>.</h4>
+
+
+
+<p align="center">
+  <a href="#key-features">Key Features</a> •
+  <a href="#how-to-use">How To Use</a> •
+  <a href="#credits">Credits</a> •
+  <a href="#related">Related</a>
+</p>
+
+
+<center>
+<img  src="https://cdn.jsdelivr.net/gh/avash027/assets/preview_spof.gif" width="80%"></img>
+</center>
+
+## Key Features
+
+- Create system design diagrams
+- Identify single points of failure
+- Export diagrams as images or JSON files
+- Import diagrams from JSON files
+
+## How To Use
+
+- Clone this repository
+ 
+```bash
+git clone https://github.com/Avash027/ReliabilityValidator.git
+```
+
+- Install dependencies
+
+```bash
+cd path/to/folder
+npm install
+```
+
+- Run the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Credits
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+This software uses the following open source packages:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- [React](https://reactjs.org/)
+- [Next.js](https://nextjs.org/)
+- [React-Flow](https://reactflow.dev/)
+- [Mantine](https://mantine.dev/)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## You may also like...
 
-To learn more about Next.js, take a look at the following resources:
+- **[MidDB](https://github.com/Avash027/MidDB)** - A High-Performance and Fault-Tolerant Key-Value Store Built with LSM Trees and Bloom Filters with Strong Consistency Guarantees 
+- **[Intra-Page-Ranker](https://github.com/Avash027/Intra-Page-Ranker)** - Intra-Page Ranker is a tool for calculating the page rank of a website. It uses a Markov matrix to calculate the rank of each page on the website, and exports the results to a file. 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Author
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Avash Mitra**
+  - [LinkedIn](https://www.linkedin.com/in/avash-mitra/)
+  - [Dev.to](https://dev.to/avash027)
+  - [Portfolio](https://avash.in)
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
